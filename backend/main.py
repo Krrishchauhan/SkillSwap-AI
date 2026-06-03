@@ -3,7 +3,11 @@ from database import engine
 from models import Base
 from models import User
 from database import SessionLocal
-from auth import hash_password
+from auth import (
+    hash_password,
+    verify_password,
+    create_access_token
+)
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -56,4 +60,36 @@ def get_users():
 def test_hash():
     return {
         "hash": hash_password("123456")
+    }
+@app.post("/login")
+def login(email: str, password: str):
+
+    db = SessionLocal()
+
+    user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    if not user:
+        return {
+            "message": "User not found"
+        }
+
+    if not verify_password(
+        password,
+        user.password
+    ):
+        return {
+            "message": "Wrong password"
+        }
+
+    token = create_access_token(
+        {"email": user.email}
+    )
+
+    db.close()
+
+    return {
+        "access_token": token,
+        "token_type": "bearer"
     }
