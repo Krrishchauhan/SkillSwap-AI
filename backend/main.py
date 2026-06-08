@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from database import engine
 from models import Base
 from models import User
@@ -6,7 +6,8 @@ from database import SessionLocal
 from auth import (
     hash_password,
     verify_password,
-    create_access_token
+    create_access_token,
+    verify_token
 )
 
 app = FastAPI()
@@ -86,10 +87,19 @@ def login(email: str, password: str):
     token = create_access_token(
         {"email": user.email}
     )
-
     db.close()
-
     return {
         "access_token": token,
         "token_type": "bearer"
+    }
+   
+
+
+@app.get("/dashboard")
+def dashboard(
+    email: str = Depends(verify_token)
+):
+    return {
+        "message": "Welcome to SkillSwap AI Dashboard",
+        "email": email
     }
