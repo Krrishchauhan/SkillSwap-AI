@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from database import engine
 from models import Base
-from models import User
+from models import User, Project
 from database import SessionLocal
 from auth import (
     hash_password,
@@ -103,3 +103,35 @@ def dashboard(
         "message": "Welcome to SkillSwap AI Dashboard",
         "email": email
     }
+@app.post("/create-project")
+def create_project(
+    title: str,
+    description: str,
+    skills_required: str,
+    owner_email: str
+):
+    db = SessionLocal()
+
+    project = Project(
+        title=title,
+        description=description,
+        skills_required=skills_required,
+        owner_email=owner_email
+    )
+
+    db.add(project)
+    db.commit()
+
+    db.close()
+
+    return {
+        "message": "Project created successfully"
+    }
+@app.get("/projects")
+def get_projects():
+
+    db = SessionLocal()
+
+    projects = db.query(Project).all()
+
+    return projects
