@@ -14,17 +14,19 @@ class Project(Base):
     __tablename__ = "projects"
 
     id = Column(Integer, primary_key=True, index=True)
+
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     skills_required = Column(String)
-    owner_email = Column(String)
+
+    owner_id = Column(Integer)
+   
 class Application(Base):
     __tablename__ = "applications"
 
     id = Column(Integer, primary_key=True, index=True)
 
     project_id = Column(Integer)
-
-    applicant_email = Column(String)
+    user_id = Column(Integer)
 
     message = Column(String)

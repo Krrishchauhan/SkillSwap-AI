@@ -108,7 +108,7 @@ def create_project(
     title: str,
     description: str,
     skills_required: str,
-    owner_email: str
+    owner_id: int
 ):
     db = SessionLocal()
 
@@ -116,7 +116,7 @@ def create_project(
         title=title,
         description=description,
         skills_required=skills_required,
-        owner_email=owner_email
+        owner_id=owner_id
     )
 
     db.add(project)
@@ -138,7 +138,7 @@ def get_projects():
 @app.post("/apply")
 def apply_project(
     project_id: int,
-    applicant_email: str,
+    user_id: int,
     message: str
 ):
 
@@ -146,7 +146,7 @@ def apply_project(
 
     application = Application(
         project_id=project_id,
-        applicant_email=applicant_email,
+        user_id=user_id,
         message=message
     )
 
