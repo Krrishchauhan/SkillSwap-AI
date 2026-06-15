@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from database import engine
 from models import Base
-from models import User, Project
+from models import User, Project, Application
 from database import SessionLocal
 from auth import (
     hash_password,
@@ -135,3 +135,34 @@ def get_projects():
     projects = db.query(Project).all()
 
     return projects
+@app.post("/apply")
+def apply_project(
+    project_id: int,
+    applicant_email: str,
+    message: str
+):
+
+    db = SessionLocal()
+
+    application = Application(
+        project_id=project_id,
+        applicant_email=applicant_email,
+        message=message
+    )
+
+    db.add(application)
+    db.commit()
+
+    db.close()
+
+    return {
+        "message": "Application submitted successfully"
+    }
+@app.get("/applications")
+def get_applications():
+
+    db = SessionLocal()
+
+    applications = db.query(Application).all()
+
+    return applications

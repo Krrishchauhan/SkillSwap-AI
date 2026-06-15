@@ -18,3 +18,13 @@ class Project(Base):
     description = Column(String, nullable=False)
     skills_required = Column(String)
     owner_email = Column(String)
+class Application(Base):
+    __tablename__ = "applications"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    project_id = Column(Integer)
+
+    applicant_email = Column(String)
+
+    message = Column(String)
